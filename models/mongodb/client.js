@@ -1,0 +1,94 @@
+import dotenv from "dotenv";
+import { MongoClient, ObjectId, ServerApiVersion } from "mongodb";
+/*
+const uri = 'mongodb+srv://williammelo533:KYwbyt2tcEGM7bnQ@supercluster.qylavvv.mongodb.net/?retryWrites=true&w=majority&appName=SuperCluster'
+*/
+
+dotenv.config();
+
+const uri = process.env.MONGODB_URI;
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
+
+async function connect() {
+  try {
+    await client.connect();
+    const database = client.db("clients_academy");
+    console.log("Database conected!");
+    return database.collection("clients");
+  } catch (error) {
+    console.error("Error connecting to the database");
+    console.error(error);
+    await client.close();
+  }
+}
+
+export class ClientModel {
+  static async getAll({ course }) {
+    const db = await connect();
+
+    if (course) {
+      return db
+        .find({
+          course: {
+            $elemMatch: {
+              $regex: course,
+              $options: "i",
+            },
+          },
+        })
+        .toArray();
+    }
+
+    return db.find({}).toArray();
+  }
+
+  static async getById({ id }) {
+    const db = await connect();
+    const objectId = new ObjectId(id);
+    return db.findOne({ _id: objectId });
+  }
+
+  static async create({ input }) {
+    const db = await connect();
+
+    const { insertedId } = await db.insertOne(input);
+
+    return {
+      id: insertedId,
+      ...input,
+    };
+  }
+
+  static async delete({ id }) {
+    const db = await connect();
+    const objectId = new ObjectId(id);
+    const { deletedCount } = await db.deleteOne({ _id: objectId });
+    return deletedCount > 0;
+  }
+
+  static async update({ id, input }) {
+    const db = await connect();
+    const objectId = new ObjectId(id);
+
+    const { ok, value } = await db.findOneAndUpdate(
+      { _id: objectId },
+      { $set: input },
+      { returnDocument: "after" }
+    );
+
+    if (!ok) {
+      console.error("No document found for update");
+      return false;
+    }
+    console.log("este es el log", value);
+    return value;
+  }
+}
