@@ -21,7 +21,6 @@ async function connect() {
   try {
     await client.connect();
     const database = client.db("clients_academy");
-    console.log("Database conected!");
     return database.collection("clients");
   } catch (error) {
     console.error("Error connecting to the database");
@@ -78,17 +77,17 @@ export class ClientModel {
     const db = await connect();
     const objectId = new ObjectId(id);
 
-    const { ok, value } = await db.findOneAndUpdate(
+    const result = await db.findOneAndUpdate(
       { _id: objectId },
       { $set: input },
       { returnDocument: "after" }
     );
 
-    if (!ok) {
-      console.error("No document found for update");
-      return false;
+    if (!result.value) {
+      return db.findOne({ _id: objectId });
     }
-    console.log("este es el log", value);
-    return value;
+
+    console.log("este es el log", result.value);
+    return result.value;
   }
 }
