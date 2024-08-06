@@ -10,9 +10,9 @@ export class ClientController {
    */
 
   static async getAll(req, res) {
-    const { course } = req.query;
-    const students = await ClientModel.getAll({ course });
-    return res.json(students);
+    const { contactNumber } = req.query;
+    const clients = await ClientModel.getAll({ contactNumber });
+    return res.json(clients);
   }
 
   static async getById(req, res) {

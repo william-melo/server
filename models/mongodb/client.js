@@ -30,20 +30,11 @@ async function connect() {
 }
 
 export class ClientModel {
-  static async getAll({ course }) {
+  static async getAll({ contactNumber }) {
     const db = await connect();
 
-    if (course) {
-      return db
-        .find({
-          course: {
-            $elemMatch: {
-              $regex: course,
-              $options: "i",
-            },
-          },
-        })
-        .toArray();
+    if (contactNumber) {
+      return db.findOne({ contactNumber: contactNumber }).toArray();
     }
 
     return db.find({}).toArray();
