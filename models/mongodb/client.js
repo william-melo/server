@@ -34,7 +34,7 @@ export class ClientModel {
     const db = await connect();
 
     if (contactNumber) {
-      return db.findOne({ contactNumber: contactNumber }).toArray();
+      return db.findOne({ contactNumber: contactNumber });
     }
 
     return db.find({}).toArray();
