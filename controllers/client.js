@@ -17,11 +17,11 @@ export class ClientController {
 
   static async getById(req, res) {
     const { id } = req.params;
-    const student = await ClientModel.getById({ id });
-    if (student) {
-      return res.json(student);
+    const client = await ClientModel.getById({ id });
+    if (client) {
+      return res.json(client);
     }
-    return res.status(404).json({ message: "Student not found" });
+    return res.status(404).json({ message: "Client not found" });
   }
 
   /**
@@ -42,9 +42,9 @@ export class ClientController {
       return res.status(400).json({ error: JSON.parse(result.error.message) });
     }
 
-    const newStudent = await ClientModel.create({ input: result.data });
+    const newClient = await ClientModel.create({ input: result.data });
 
-    res.status(201).json(newStudent);
+    res.status(201).json(newClient);
   }
 
   /**
@@ -62,7 +62,7 @@ export class ClientController {
     if (result === false) {
       return res
         .status(404)
-        .json({ message: "No se ha encontrado el estudiante" });
+        .json({ message: "No se ha encontrado el cliente" });
     }
 
     return res.json({ message: "Client deleted" });
@@ -76,6 +76,9 @@ export class ClientController {
    */
 
   static async update(req, res) {
+    if (req.body.contactDate) {
+      req.body.contactDate = new Date(req.body.contactDate);
+    }
     // Validamos parcialmente las info del body
     const result = validatePartialClient(req.body);
     if (!result.success) {
