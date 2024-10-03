@@ -47,6 +47,7 @@ const clientSchema = z.object({
   companyIndustry: z.string(),
   dailyVisits: z.string(),
   modeOfVisits: z.string(),
+  plan: z.string(),
 });
 
 export function validateClient(object) {
