@@ -43,7 +43,6 @@ const clientSchema = z.object({
   contactNumber: z.string(),
   email: z.string().email("Invalid email address"),
   contactDate: z.date().transform((str) => new Date(str)),
-  companyCountry: z.string(),
   companyIndustry: z.string(),
   dailyVisits: z.string(),
   modeOfVisits: z.string(),
